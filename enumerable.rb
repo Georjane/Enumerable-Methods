@@ -1,23 +1,12 @@
-# module Enumerable
-    def my_each(arr)
-      i = 0
-      results = []
-      while i < arr.length
-        results << yield(arr[i])
-        i += 1
+def my_all?(arr)
+  i = 0
+  check = true
+    while i < arr.length
+      if !yield(arr[i])
+        check = false
       end
+      i += 1
     end
-  # end
+    return check
+end
 
-  my_each([1, 2, 3, 4, 5]) {|x| puts x * 2}
-
-  def my_each_with_index(arr)
-    i = 0
-    results = []
-      while i < arr.length
-        results << yield(arr[i],i)
-        i += 1
-      end
-  end
-
-  my_each_with_index([1, 2, 3, 4, 5]) {|val, index| puts "index: #{index} for val: #{val}"}
