@@ -1,6 +1,6 @@
 # Enumerable-Methods
 
-> Enumerable modules are methods that gets mixed into the Array and Hash classes (among others) and provides us with lots of handy iterator methods.
+Enumerable modules are methods that gets mixed into the Array and Hash classes (among others) and provides us with lots of handy iterator methods.
 In this project, we built our own enumerable methods while using the Git flow for the first time
 - my_each
 - my_each_with_index
