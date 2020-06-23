@@ -92,6 +92,32 @@ module Enumerable
     end
     result
   end
+
+  # def my_inject(*args)
+  #   symbol = args[1]
+  #   result = args[0]
+  #   if block_given?
+  #     if args[0].nil?
+  #       result = self[0]
+  #       drop(1).my_each { |x| result = yield(result, x) }
+  #     elsif args[0].integer? && args[1].nil?
+  #       my_each { |x| result = yield(result, x) }
+  #     end
+  #   elsif args[1].nil?
+  #     symbol = args[0]
+  #     res = case symbol
+  #           when :+ || :-
+  #             0
+  #           else
+  #             1
+  #           end
+  #     my_each { |x| res = res.send(symbol, x) }
+  #     return res
+  #   else
+  #     my_each { |x| result = result.send(symbol, x) }
+  #   end
+  #   result
+  # end
 end
 
 # RESOURCES
@@ -105,22 +131,22 @@ a = [1, 2, 3, 4, 5]
 # -------------
 
 # TESTS
-puts (a.my_each {|x| x , ' -- '})
-puts (a.my_each_with_index { |val, index| "index: #{index} for #{val}" if val < 30 })
-puts (a.my_select(&:even?))
-puts (a.my_all? {|x| x < 3 }) #=> false
-puts (%w[ant bear cat].my_all? { |word| word.length >= 4 }) #=> false
-puts (a.my_any? { |x| x >= 3 }) #=> true
-puts (%w[ant bear cat].my_any? { |word| word.length >= 4 }) #=> true
-puts (a.my_none? { |x| x == 5 }) #=> false
-puts (%w[ant bear cat].my_none? { |word| word.length >= 4 }) #=> false
-puts (a.my_count) #=> 5
-puts (a.my_count { |x| x > 2 }) #=> 3
-puts (%w[cat bear dog].my_map { |x| x + '!' })
-puts (a.my_map { |x| x + 10 })
-puts (a.my_map(my_proc))
-puts (a.my_inject(:+)) #=> 15
-puts (a.my_inject { |sum, n| sum + n }) #=> 15
-puts (a.my_inject(1, :*)) #=> 120
-puts (a.my_inject(1) { |product, n| product * n }) #=> 120
-puts (multiply_els([2, 4, 5]))
+puts(a.my_each { |x| x + 1 })
+puts(a.my_each_with_index { |val, index| "index: #{index} for #{val}" if val < 30 })
+puts(a.my_select(&:even?))
+puts(a.my_all? { |x| x < 3 }) #=> false
+puts(%w[ant bear cat].my_all? { |word| word.length >= 4 }) #=> false
+puts(a.my_any? { |x| x >= 3 }) #=> true
+puts(%w[ant bear cat].my_any? { |word| word.length >= 4 }) #=> true
+puts(a.my_none? { |x| x == 5 }) #=> false
+puts(%w[ant bear cat].my_none? { |word| word.length >= 4 }) #=> false
+puts(a.my_count) #=> 5
+puts(a.my_count { |x| x > 2 }) #=> 3
+puts(%w[cat bear dog].my_map { |x| x + '!' })
+puts(a.my_map { |x| x + 10 })
+puts(a.my_map(my_proc))
+puts(a.my_inject(:+)) #=> 15
+puts(a.my_inject { |sum, n| sum + n }) #=> 15
+puts(a.my_inject(1, :*)) #=> 120
+puts(a.my_inject(1) { |product, n| product * n }) #=> 120
+puts multiply_els([2, 4, 5])
