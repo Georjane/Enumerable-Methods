@@ -1,8 +1,8 @@
 module Enumerable
   def my_each
     return to_enum unless block_given?
+
     arr = [Hash, Range].member?(self.class) ? to_a.flatten : self
-    
     i = 0
     while i < arr.length
       yield(arr[i])
@@ -13,47 +13,65 @@ module Enumerable
 
   def my_each_with_index
     return to_enum unless block_given?
-    arr = [Hash, Range].member?(self.class) ? to_a.flatten : self
 
+    arr = [Hash, Range].member?(self.class) ? to_a.flatten : self
     i = 0
     while i < arr.length
-      if arr[i].is_a? Integer
-        yield(arr[i], i)
-        i += 1
-      else 
-        i += 1
-      end
+      yield(arr[i], i) if arr[i].is_a? Integer
+      i += 1
     end
     arr
   end
 
   def my_select
     return to_enum unless block_given?
-    arr = [Hash, Range].member?(self.class) ? to_a.flatten : self
 
+    arr = [Hash, Range].member?(self.class) ? to_a.flatten : self
     results = []
     arr.my_each { |x| results << x if yield(x) }
     results
   end
 
-  def my_all?
+  def my_all?(test = nil)
     check = true
-    my_each { |x| check = false unless yield(x) }
+    if block_given?
+      my_each { |x| check = false unless yield(x) }
+      check
+    elsif test.is_a? Class
+      my_each { |x| check = false if x.class != test }
+    elsif test.is_a? Regexp
+      my_each { |x| check = false unless test.match(x) }
+    else
+      my_each { |x| check = false if x.nil? || x == false }
+    end
     check
   end
 
-  def my_any?
+  def my_any?(test = nil)
     check = false
-    my_each { |x| check = true if yield(x) }
+    if block_given?
+      my_each { |x| check = true if yield(x) }
+    elsif test.is_a? Class
+      my_each { |x| check = true if x.class == test }
+    elsif test.is_a? Regexp
+      my_each { |x| check = true if test.match(x) }
+    else
+      test_array = [true, [], {}]
+      my_each { |x| check = true if test_array.include?(x) }
+    end
     check
   end
 
-  def my_none?
+  def my_none?(test = nil)
     check = true
     if block_given?
       my_each { |x| check = false if yield(x) }
+    elsif test.is_a? Class
+      my_each { |x| check = false if x.class == test }
+    elsif test.is_a? Regexp
+      my_each { |x| check = false if test.match(x) }
     else
-      check = false unless nil? || empty?
+      my_each { |x| check = false if x == true }
     end
     check
   end
@@ -105,7 +123,6 @@ module Enumerable
     end
     result
   end
-
 end
 
 my_proc = proc { |y| y**2 }
@@ -121,7 +138,7 @@ puts(a.my_each_with_index { |val, index| "index: #{index} for #{val}" if val < 3
 puts(a.my_select(&:even?))
 puts(a.my_all? { |x| x < 3 }) #=> false
 puts(%w[ant bear cat].my_all? { |word| word.length >= 4 }) #=> false
-puts(a.my_any? { |x| x >= 3 }) #=> true
+puts(a.my_any? { |x| x >= 10 }) #=> true
 puts(%w[ant bear cat].my_any? { |word| word.length >= 4 }) #=> true
 puts(a.my_none? { |x| x == 5 }) #=> false
 puts(%w[ant bear cat].my_none? { |word| word.length >= 4 }) #=> false
