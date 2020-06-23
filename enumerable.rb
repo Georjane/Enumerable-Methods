@@ -42,7 +42,8 @@ module Enumerable
     elsif test.is_a? Regexp
       my_each { |x| check = false unless test.match(x) }
     else
-      my_each { |x| check = false if x.nil? || x == false }
+      t_ar = [nil, false]
+      my_each { |x| check = false if t_ar.include?(x) || x != test }
     end
     check
   end
@@ -57,7 +58,7 @@ module Enumerable
       my_each { |x| check = true if test.match(x) }
     else
       test_array = [true, [], {}]
-      my_each { |x| check = true if test_array.include?(x) }
+      my_each { |x| check = true if test_array.include?(x) || include?(test) }
     end
     check
   end
@@ -71,16 +72,20 @@ module Enumerable
     elsif test.is_a? Regexp
       my_each { |x| check = false if test.match(x) }
     else
-      my_each { |x| check = false if x == true }
+      my_each { |x| check = false if x == true || include?(test) }
     end
     check
   end
 
-  def my_count
-    return size unless block_given?
-
+  def my_count(num = nil)
     j = 0
-    my_each { |x| j += 1 if yield(x) }
+    if block_given?
+      my_each { |x| j += 1 if yield(x) }
+    elsif !num.nil?
+      my_each { |x| j += 1 if x == num }
+    else
+      return size
+    end
     j
   end
 
@@ -143,7 +148,7 @@ puts(%w[ant bear cat].my_any? { |word| word.length >= 4 }) #=> true
 puts(a.my_none? { |x| x == 5 }) #=> false
 puts(%w[ant bear cat].my_none? { |word| word.length >= 4 }) #=> false
 puts(a.my_count) #=> 5
-puts(a.my_count { |x| x > 2 }) #=> 3
+puts(a.my_count { |x| x == 'dog' }) #=> 3
 puts(%w[cat bear dog].my_map { |x| x + '!' })
 puts(a.my_map { |x| x + 10 })
 puts(a.my_map(my_proc))
