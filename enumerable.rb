@@ -1,27 +1,38 @@
 module Enumerable
   def my_each
     return to_enum unless block_given?
-
+    arr = [Hash, Range].member?(self.class) ? to_a.flatten : self
+    
     i = 0
-    while i < length
-      yield(self[i])
+    while i < arr.length
+      yield(arr[i])
       i += 1
     end
-    self
+    arr
   end
 
   def my_each_with_index
     return to_enum unless block_given?
+    arr = [Hash, Range].member?(self.class) ? to_a.flatten : self
 
-    results = []
-    my_each { |x| results << yield(x, index(x)) }
+    i = 0
+    while i < arr.length
+      if arr[i].is_a? Integer
+        yield(arr[i], i)
+        i += 1
+      else 
+        i += 1
+      end
+    end
+    arr
   end
 
   def my_select
     return to_enum unless block_given?
+    arr = [Hash, Range].member?(self.class) ? to_a.flatten : self
 
     results = []
-    my_each { |x| results << x if yield(x) }
+    arr.my_each { |x| results << x if yield(x) }
     results
   end
 
@@ -56,11 +67,12 @@ module Enumerable
   end
 
   def my_map(proc = nil)
+    arr = is_a?(Range) ? to_a : self
     results = []
     if block_given?
-      my_each { |x| results << yield(x) }
+      arr.my_each { |x| results << yield(x) }
     elsif proc
-      my_each { |x| results << proc.call(x) }
+      arr.my_each { |x| results << proc.call(x) }
     else
       return to_enum
     end
@@ -68,14 +80,15 @@ module Enumerable
   end
 
   def my_inject(*args)
+    arr = is_a?(Range) ? to_a : self
     symbol = args[1]
     result = args[0]
     if block_given?
       if args[0].nil?
-        result = self[0]
-        drop(1).my_each { |x| result = yield(result, x) }
+        result = arr[0]
+        arr.drop(1).my_each { |x| result = yield(result, x) }
       elsif args[0].integer? && args[1].nil?
-        my_each { |x| result = yield(result, x) }
+        arr.my_each { |x| result = yield(result, x) }
       end
     elsif args[1].nil?
       symbol = args[0]
@@ -85,42 +98,16 @@ module Enumerable
             else
               1
             end
-      my_each { |x| res = res.send(symbol, x) }
+      arr.my_each { |x| res = res.send(symbol, x) }
       return res
     else
-      my_each { |x| result = result.send(symbol, x) }
+      arr.my_each { |x| result = result.send(symbol, x) }
     end
     result
   end
 
-  # def my_inject(*args)
-  #   symbol = args[1]
-  #   result = args[0]
-  #   if block_given?
-  #     if args[0].nil?
-  #       result = self[0]
-  #       drop(1).my_each { |x| result = yield(result, x) }
-  #     elsif args[0].integer? && args[1].nil?
-  #       my_each { |x| result = yield(result, x) }
-  #     end
-  #   elsif args[1].nil?
-  #     symbol = args[0]
-  #     res = case symbol
-  #           when :+ || :-
-  #             0
-  #           else
-  #             1
-  #           end
-  #     my_each { |x| res = res.send(symbol, x) }
-  #     return res
-  #   else
-  #     my_each { |x| result = result.send(symbol, x) }
-  #   end
-  #   result
-  # end
 end
 
-# RESOURCES
 my_proc = proc { |y| y**2 }
 
 def multiply_els(arr)
@@ -128,9 +115,7 @@ def multiply_els(arr)
 end
 
 a = [1, 2, 3, 4, 5]
-# -------------
 
-# TESTS
 puts(a.my_each { |x| x + 1 })
 puts(a.my_each_with_index { |val, index| "index: #{index} for #{val}" if val < 30 })
 puts(a.my_select(&:even?))
