@@ -8,7 +8,7 @@ module Enumerable
       yield(arr[i])
       i += 1
     end
-    arr
+    self
   end
 
   def my_each_with_index
@@ -20,7 +20,7 @@ module Enumerable
       yield(arr[i], i) if arr[i].is_a? Integer
       i += 1
     end
-    arr
+    self
   end
 
   def my_select
@@ -37,7 +37,7 @@ module Enumerable
     if block_given?
       my_each { |x| check = false unless yield(x) }
     elsif test.is_a? Class
-      my_each { |x| check = false if x.class != test }
+      my_each { |x| check = false unless x.class.ancestors.include?(test) }
     elsif test.is_a? Regexp
       my_each { |x| check = false unless test.match(x) }
     elsif test.nil?
@@ -54,7 +54,7 @@ module Enumerable
     if block_given?
       my_each { |x| check = true if yield(x) }
     elsif test.is_a? Class
-      my_each { |x| check = true if x.class == test }
+      my_each { |x| check = true if x.class.ancestors.include?(test) }
     elsif test.is_a? Regexp
       my_each { |x| check = true if test.match(x) }
     elsif test.nil?
@@ -96,10 +96,10 @@ module Enumerable
   def my_map(&proc)
     arr = is_a?(Range) ? to_a : self
     results = []
-    if block_given?
-      arr.my_each { |x| results << yield(x) }
-    elsif proc
+    if !proc.nil?
       arr.my_each { |x| results << proc.call(x) }
+    elsif block_given?
+      arr.my_each { |x| results << yield(x) }
     else
       return to_enum
     end
@@ -136,30 +136,39 @@ module Enumerable
   end
 end
 
-my_proc = proc { |y| y**2 }
+
 
 def multiply_els(arr)
   arr.my_inject(:*)
 end
 
-a = [1, 2, 3, 4, 5]
 
-puts(a.my_each { |x| x + 1 })
-puts(a.my_each_with_index { |val, index| "index: #{index} for #{val}" if val < 30 })
-puts(a.my_select(&:even?))
-puts(a.my_all? { |x| x < 3 }) #=> false
-puts(%w[ant bear cat].my_all? { |word| word.length >= 4 }) #=> false
-puts(a.my_any? { |x| x >= 10 }) #=> true
-puts(%w[ant bear cat].my_any? { |word| word.length >= 4 }) #=> true
-puts(a.my_none? { |x| x == 5 }) #=> false
-puts(%w[ant bear cat].my_none? { |word| word.length >= 4 }) #=> false
-puts(a.my_count) #=> 5
-puts(a.my_count { |x| x == 'dog' }) #=> 3
-puts(%w[cat bear dog].my_map { |x| x + '!' })
-puts(a.my_map { |x| x + 10 })
-puts(a.my_map(my_proc))
-puts(a.my_inject(:+)) #=> 15
-puts(a.my_inject { |sum, n| sum + n }) #=> 15
-puts(a.my_inject(1, :*)) #=> 120
-puts(a.my_inject(1) { |product, n| product * n }) #=> 120
-puts multiply_els([2, 4, 5])
+
+# puts(a.my_each { |x| x + 1 })
+# puts(a.my_each_with_index { |val, index| "index: #{index} for #{val}" if val < 30 })
+# puts(a.my_select(&:even?))
+# puts(a.my_all? { |x| x < 3 }) #=> false
+# puts(%w[ant bear cat].my_all? { |word| word.length >= 4 }) #=> false
+# puts(a.my_any? { |x| x >= 10 }) #=> true
+# puts(%w[ant bear cat].my_any? { |word| word.length >= 4 }) #=> true
+# puts(a.my_none? { |x| x == 5 }) #=> false
+# puts(%w[ant bear cat].my_none? { |word| word.length >= 4 }) #=> false
+# puts(a.my_count) #=> 5
+# puts(a.my_count { |x| x == 'dog' }) #=> 3
+# puts(%w[cat bear dog].my_map { |x| x + '!' })
+# puts(a.my_map { |x| x + 10 })
+# puts(a.my_map(my_proc))
+# puts(a.my_inject(:+)) #=> 15
+# puts(a.my_inject { |sum, n| sum + n }) #=> 15
+# puts(a.my_inject(1, :*)) #=> 120
+# puts(a.my_inject(1) { |product, n| product * n }) #=> 120
+# puts multiply_els([2, 4, 5])
+
+# a = [1, 2, 3, 4, 5]
+# my_proc = proc { |y| y > 3 }
+
+# puts a.map(&my_proc) {|x| x * 2}
+# puts ('----')
+# puts a.my_map(&my_proc) {|x| x * 2}
+
+
