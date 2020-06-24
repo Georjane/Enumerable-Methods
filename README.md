@@ -9,10 +9,6 @@
 
 - Ruby
 
-## Live Code
-[Live Link]()
-
-
 ## Getting Started
 
 To get a local copy of the repository please run the following commands on your terminal:
