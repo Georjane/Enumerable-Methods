@@ -1,9 +1,16 @@
 # Enumerable-Methods
 
-
-### Enumerable-Methods: Steps on how it works:
-
-![screenshot]()
+Enumerable modules are methods that gets mixed into the Array and Hash classes (among others) and provides us with lots of handy iterator methods.
+In this project, we built our own enumerable methods while using the Git flow for the first time
+- my_each
+- my_each_with_index
+- my_select
+- my_all?
+- my_any?
+- my_none?
+- my_count
+- my_map
+- my_inject
 
 ## Built With
 
@@ -18,11 +25,11 @@
 To get a local copy of the repository please run the following commands on your terminal:
 
 ```
-$ cd <folder>
+$ cd <Enumerables>
 ```
 
 ```
-$ git clone 
+$ git clone https://github.com/Georjane/Enumerable-Methods.git
 ```
 
 ## Authors
@@ -43,7 +50,7 @@ $ git clone
 
 Contributions, issues and feature requests are welcome!
 
-Feel free to check the [issues page]().
+Feel free to check the [issues page](https://github.com/Georjane/Enumerable-Methods/issues).
 
 
 ## Show your support
