@@ -36,14 +36,15 @@ module Enumerable
     check = true
     if block_given?
       my_each { |x| check = false unless yield(x) }
-      check
     elsif test.is_a? Class
       my_each { |x| check = false if x.class != test }
     elsif test.is_a? Regexp
       my_each { |x| check = false unless test.match(x) }
-    else
+    elsif test.nil?
       t_ar = [nil, false]
-      my_each { |x| check = false if t_ar.include?(x) || x != test }
+      my_each { |x| check = false if t_ar.include?(x) }
+    else
+      my_each { |x| check = false if x != test }
     end
     check
   end
@@ -56,9 +57,10 @@ module Enumerable
       my_each { |x| check = true if x.class == test }
     elsif test.is_a? Regexp
       my_each { |x| check = true if test.match(x) }
+    elsif test.nil?
+      my_each { |x| check = true if !x.nil? && x != false }
     else
-      test_array = [true, [], {}]
-      my_each { |x| check = true if test_array.include?(x) || include?(test) }
+      my_each { |_x| check = true if include?(test) }
     end
     check
   end
@@ -71,8 +73,10 @@ module Enumerable
       my_each { |x| check = false if x.class == test }
     elsif test.is_a? Regexp
       my_each { |x| check = false if test.match(x) }
+    elsif test.nil?
+      my_each { |x| check = false if !x.nil? && x != false }
     else
-      my_each { |x| check = false if x == true || include?(test) }
+      my_each { |_x| check = false if include?(test) }
     end
     check
   end
@@ -89,7 +93,7 @@ module Enumerable
     j
   end
 
-  def my_map(proc = nil)
+  def my_map(&proc)
     arr = is_a?(Range) ? to_a : self
     results = []
     if block_given?
@@ -113,6 +117,8 @@ module Enumerable
       elsif args[0].integer? && args[1].nil?
         arr.my_each { |x| result = yield(result, x) }
       end
+    elsif args[0].nil?
+      my_each { |x| yield(x) }
     elsif args[1].nil?
       symbol = args[0]
       res = case symbol
