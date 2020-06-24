@@ -136,13 +136,9 @@ module Enumerable
   end
 end
 
-
-
 def multiply_els(arr)
   arr.my_inject(:*)
 end
-
-
 
 # puts(a.my_each { |x| x + 1 })
 # puts(a.my_each_with_index { |val, index| "index: #{index} for #{val}" if val < 30 })
@@ -170,5 +166,3 @@ end
 # puts a.map(&my_proc) {|x| x * 2}
 # puts ('----')
 # puts a.my_map(&my_proc) {|x| x * 2}
-
-
