@@ -7,14 +7,38 @@ describe Enumerable do
   let(:inj_arr) { (5..10) }
 
   describe '#my_each' do
-    it 'returns itself' do
-      expect(arr.my_each { |x| x * 2 }).to eql(1..5)
+    context 'When block given' do
+      it 'returns itself' do
+        expect(arr.my_each { |x| x * 2 }).to eql(1..5)
+      end
+
+      it 'returns itself' do
+        expect(arr.my_each { |x| puts x * 2 }).to eql(1..5)
+      end
+    end
+
+    context 'When no block given' do
+      it 'returns an Enumerator' do
+        expect(arr.my_each).to be_an Enumerator
+      end
     end
   end
 
   describe '#my_each_with_index' do
-    it 'returns itself' do
-      expect(arr.my_each_with_index { |x, y| x * y }).to eql(1..5)
+    context 'When block given' do
+      it 'returns itself' do
+        expect(arr.my_each_with_index { |x, y| x * y }).to eql(1..5)
+      end
+
+      it 'returns itself' do
+        expect(arr.my_each_with_index { |x, y| puts x * y }).to eql(1..5)
+      end
+    end
+
+    context 'When no block given' do
+      it 'returns an Enumerator' do
+        expect(arr.my_each_with_index).to be_an Enumerator
+      end
     end
   end
 
@@ -38,7 +62,7 @@ describe Enumerable do
     end
 
     it 'Returns true if the block never returns false or nil.' do
-      expect(animals.my_all? { |word| word == 't' }).to be false
+      expect(animals.my_all? { |word| word == /t/ }).to be false
     end
 
     it 'Returns true if the block never returns false or nil.' do
@@ -64,7 +88,7 @@ describe Enumerable do
     end
 
     it 'Returns true if the block ever returns a value other than false or nil.' do
-      expect(animals.my_any? { |word| word == 'd' }).to be false
+      expect(animals.my_any? { |word| word == /d/ }).to be false
     end
 
     it 'Returns true if the block ever returns a value other than false or nil.' do
@@ -90,7 +114,7 @@ describe Enumerable do
     end
 
     it 'Returns true if the block never returns true for all elements.' do
-      expect(animals.my_none? { |word| word == 'd' }).to be true
+      expect(animals.my_none? { |word| word == /d/ }).to be true
     end
 
     it 'Returns true if the block never returns true for all elements.' do
@@ -129,12 +153,20 @@ describe Enumerable do
   end
 
   describe '#my_map' do
-    it 'Returns a new array with the results of running a block once for every element.' do
-      expect(arr.my_map { |i| i * i }).to eql [1, 4, 9, 16, 25]
+    context 'When block given' do
+      it 'Returns a new array with the results of running a block once for every element.' do
+        expect(arr.my_map { |i| i * i }).to eql [1, 4, 9, 16, 25]
+      end
+
+      it 'Returns a new array with the results of running a block once for every element.' do
+        expect(arr.my_map { 'cat' }).to eql %w[cat cat cat cat cat]
+      end
     end
 
-    it 'Returns a new array with the results of running a block once for every element.' do
-      expect(arr.my_map { 'cat' }).to eql %w[cat cat cat cat cat]
+    context 'When block given' do
+      it 'Returns to enumerator' do
+        expect(arr.my_map).to be_an Enumerator
+      end
     end
   end
 
@@ -146,6 +178,14 @@ describe Enumerable do
     it 'Combines all elements by applying a binary operation, specified by a block or a symbol that names a method or operator.' do
       longest = animals.my_inject { |memo, word| memo.length > word.length ? memo : word }
       expect(longest).to eql 'bear'
+    end
+
+    it 'Combines all elements by applying a binary operation, specified by a block or a symbol that names a method or operator.' do
+      expect(inj_arr.my_inject(:+)).to eql 45
+    end
+
+    it 'Combines all elements by applying a binary operation, specified by a block or a symbol that names a method or operator.' do
+      expect(inj_arr.my_inject(1, :*)).to eql 151_200
     end
   end
 end
