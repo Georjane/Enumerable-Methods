@@ -163,7 +163,7 @@ describe Enumerable do
       end
     end
 
-    context 'When block given' do
+    context 'When no block given' do
       it 'Returns to enumerator' do
         expect(arr.my_map).to be_an Enumerator
       end
