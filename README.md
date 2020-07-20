@@ -21,14 +21,41 @@ In this project, we built our own enumerable methods while using the Git flow fo
 To get a local copy of the repository please run the following commands on your terminal:
 
 ```
-$ cd <Enumerables>
-```
-
-```
 $ git clone https://github.com/Georjane/Enumerable-Methods.git
 ```
 
+```
+$ cd <Enumerable-Methods>
+```
+
+## To run the code:
+
+```
+$ ruby enumerable.rb
+```
+
+## Testing
+### Install Rspec
+
+```
+$ gem install rspec
+```
+To test the code, run rspec from root of the folder using terminal as follows
+
+```
+rspec
+```
+
+Rspec is used for the test.
+
+
 ## Authors
+
+👤 **Luciano Ilha**
+
+- Github: [@luciano-ilha](https://github.com/luciano-ilha)
+- Twitter: [@CarbonellIlha](https://twitter.com/CarbonellIlha)
+- Linkedin: [Luciano Ilha Carbonell](https://www.linkedin.com/in/luciano-ilha-carbonell-188115a0/)
 
 👤 **Lucas Delbel**
 
